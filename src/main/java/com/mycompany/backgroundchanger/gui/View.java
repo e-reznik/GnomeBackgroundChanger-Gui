@@ -1,11 +1,11 @@
 package com.mycompany.backgroundchanger.gui;
 
 import app.App;
+import app.Sources;
 import java.awt.BorderLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,12 +15,15 @@ import javax.swing.JPanel;
 
 public class View extends JFrame {
 
-    JButton bChange = new JButton("Change");
-    JComboBox<String> combo = new JComboBox<>();
-    App backgroundChanger = new App();
-    Map<String, String> sources = backgroundChanger.getSources();
+    private final JButton bChange = new JButton("Change");
+    private final JComboBox<String> combo = new JComboBox<>();
+    private final App backgroundChanger;
+    private final Map<String, String> sources;
 
-    public View() {
+    public View() throws IOException {
+        backgroundChanger = new App();
+        sources = Sources.readSourceFile();
+
         JPanel panel = new JPanel();
 
         loadSources();
@@ -51,15 +54,13 @@ public class View extends JFrame {
         bChange.setText("Please wait...");
         String sel = combo.getSelectedItem().toString();
 
-        System.out.println(sel);
-
         try {
             backgroundChanger.change(sel);
             bChange.setEnabled(true);
             bChange.setText("Change");
             JOptionPane.showMessageDialog(this,
                     "Your Background has been changed!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (HeadlessException | IOException | URISyntaxException e) {
+        } catch (HeadlessException | IOException e) {
             JOptionPane.showMessageDialog(this,
                     e.toString(), "Error", JOptionPane.ERROR);
         }
